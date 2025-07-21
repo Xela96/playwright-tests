@@ -1,0 +1,261 @@
+import { test, expect } from '@playwright/test';
+import { getAccessToken, checkInbox } from 'gmail-getter';
+import * as fs from 'fs';
+import * as path from 'path';
+
+
+test.beforeEach(async ({ page }) => {
+  // Go to the starting url before each test.
+  await page.goto('https://dohertyalex.cc/');
+});
+
+function decodeBase64Url(base64url: string): string {
+  const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+  const buff = Buffer.from(base64, 'base64');
+  return buff.toString('utf-8');
+}
+  
+
+test.describe('Navigation', {
+  tag: '@navigation',
+}, () => {
+
+  test('homepage loads and has correct title', {
+    tag: ['@smoke', '@functional'],
+  }, async ({ page }) => {
+    await expect(page).toHaveTitle(/Alex Doherty/);
+
+    await page.goto('https://www.dohertyalex.cc/');
+
+    await expect(page).toHaveTitle(/Alex Doherty/);
+  });
+
+  test('LinkedIn link navigates correctly', {
+    tag: ['@smoke', '@functional'],
+  }, async ({ page }) => {
+    await page.locator('a.btn:has(i.bi-linkedin)').click();
+    expect(page.url()).toContain('linkedin.com/in/alex-doherty/');
+  });
+
+  test('Github link navigates correctly', {
+    tag: ['@smoke', '@functional'],
+  }, async ({ page }) => {
+    await page.locator('a.btn:has(i.bi-github)').click();
+    expect(page.url()).toContain('github.com/Xela96');
+  });
+
+  test('Projects page link navigates correctly', {
+    tag: ['@smoke', '@functional'],
+  }, async ({ page }) => {
+    await page.click('text=Projects')
+    expect(page.url()).toContain('dohertyalex.cc/projects');
+  });
+
+});
+
+test.describe('Form validation', {
+  tag: ['@form', '@validation'],
+}, () => {
+
+  test('name textbox can be used', {
+    tag: ['@functional'],
+  }, async ({ page }) => {
+    await page.getByRole('textbox', { name: 'name' }).fill('example name');
+  });
+
+  test('email textbox can be used', {
+    tag: ['@functional'],
+  }, async ({ page }) => {
+    await page.getByRole('textbox', { name: 'email' }).fill('example email');
+  });
+
+  test('message textbox can be used', {
+    tag: ['@functional'],
+  }, async ({ page }) => {
+    await page.getByRole('textbox', { name: 'message' }).fill('example message of 20 characters');
+  });
+
+  test('name textbox enforces a max length of 40', {
+    tag: ['@functional'],
+  }, async ({ page }) => {
+    await test.step('Fill out contact form fields', async () => {
+      await page.getByRole('textbox', { name: 'name' }).fill('this is a test name that is too long over 40 characters');
+      await page.getByRole('textbox', { name: 'email' }).fill('validmail@gmail.com');
+      await page.getByRole('textbox', { name: 'message' }).fill('example message of 20 characters');
+    });
+
+    await expect(page.getByRole('textbox', { name: 'name' })).toHaveValue('this is a test name that is too long ove');
+  });
+
+  test('name textbox enforces a min length of 3 characters', {
+    tag: ['@functional'],
+  }, async ({ page }) => {
+    await test.step('Fill out contact form fields', async () => {
+      await page.getByRole('textbox', { name: 'name' }).fill('1');
+      await page.getByRole('textbox', { name: 'email' }).fill('validmail@gmail.com');
+      await page.getByRole('textbox', { name: 'message' }).fill('example message of 20 characters');
+    });
+
+    let postRequestTriggered = false;
+
+    page.on('request', (request) => {
+      if (request.method() === 'POST' && request.url().includes('/')) {
+        postRequestTriggered = true;
+      }
+    });
+
+    await page.click('input[value="Send Message"]');
+
+    expect(postRequestTriggered).toBe(false);
+
+    await expect(page.getByRole('textbox', { name: 'name' })).toHaveValue('1');
+
+  });
+
+  test('email textbox enforces a max length of 60', {
+    tag: ['@functional'],
+  }, async ({ page }) => {
+    await test.step('Fill out contact form fields', async () => {
+      await page.getByRole('textbox', { name: 'name' }).fill('John Doe');
+      await page.getByRole('textbox', { name: 'email' }).fill('this_is_a_test_name_that_is_too_long_over_60_characters@gmail.com');
+      await page.getByRole('textbox', { name: 'message' }).fill('example message of 20 characters');
+    });
+
+    await expect(page.getByRole('textbox', { name: 'email' })).toHaveValue('this_is_a_test_name_that_is_too_long_over_60_characters@gmai');
+  });
+
+  test('email textbox enforces a min length of 3 characters', {
+    tag: ['@functional'],
+  }, async ({ page }) => {
+    await test.step('Fill out contact form fields', async () => {
+      await page.getByRole('textbox', { name: 'name' }).fill('John Doe');
+      await page.getByRole('textbox', { name: 'email' }).fill('1');
+      await page.getByRole('textbox', { name: 'message' }).fill('example message of 20 characters');
+    });
+
+    let postRequestTriggered = false;
+
+    page.on('request', (request) => {
+      if (request.method() === 'POST' && request.url().includes('/')) {
+        postRequestTriggered = true;
+      }
+    });
+
+    await page.click('input[value="Send Message"]');
+
+    expect(postRequestTriggered).toBe(false);
+
+    await expect(page.getByRole('textbox', { name: 'email' })).toHaveValue('1');
+
+  });
+
+  test('message textbox enforces a max length of 500', {
+    tag: ['@functional'],
+  }, async ({ page }) => {
+    await test.step('Fill out contact form fields', async () => {
+      await page.getByRole('textbox', { name: 'name' }).fill('John Doe');
+      await page.getByRole('textbox', { name: 'email' }).fill('validmail@gmail.com');
+      await page.getByRole('textbox', { name: 'message' }).fill('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    });
+
+    await expect(page.getByRole('textbox', { name: 'message' })).toHaveValue('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+  });
+
+  test('email textbox enforces a min length of 20 characterss', {
+    tag: ['@functional', '@regression'],
+  }, async ({ page }, testInfo) => {
+    await test.step('Fill out contact form fields', async () => {
+      await page.getByRole('textbox', { name: 'name' }).fill('John Doe');
+      await page.getByRole('textbox', { name: 'email' }).fill('validmail@gmail.com');
+      await page.getByRole('textbox', { name: 'message' }).fill('less than 20 chars');
+    });
+
+
+    let postRequestTriggered = false;
+    page.on('request', (request) => {
+      if (request.method() === 'POST' && request.url().includes('/')) {
+        postRequestTriggered = true;
+      }
+    });
+
+    await page.click('input[value="Send Message"]');
+
+    // alternative expectation for webkit due to different error messages
+    if (testInfo.project.name === 'webkit') {
+      await expect(page.getByText(/Form validation failed/i)).toBeVisible();
+    }
+    else{
+      expect(postRequestTriggered).toBe(false);
+    }
+
+    await expect(page.getByRole('textbox', { name: 'message' })).toHaveValue('less than 20 chars');
+
+  });
+
+});
+
+test.describe('Form submission', {
+  tag: '@form',
+}, () => {
+  
+  let accessToken: string;
+  test.beforeAll(async () => {
+    console.log('Before tests');
+    accessToken = fs.readFileSync(
+      path.resolve(__dirname, '../../.access_token'),
+      'utf-8'
+    );
+  });
+    
+  test('valid form submission sends email to correct address', {
+    tag: ['@smoke', '@e2e', '@regression'],
+  }, async ({ page }) => {
+    await test.step('Fill out contact form fields', async () => {
+      await page.getByRole('textbox', { name: 'name' }).fill('John Doe');
+      await page.getByRole('textbox', { name: 'email' }).fill('validmail@gmail.com');
+      await page.getByRole('textbox', { name: 'message' }).fill('Valid message of greater than 20 chars');
+    });
+
+    await page.click('input[value="Send Message"]');
+
+    const email = await checkInbox({token: accessToken!,
+        timeout: 15000, 
+        step: 1500, 
+        query: 'from:jbloggo96@gmail.com subject:John Doe'
+    });
+
+    expect(email).not.toBeNull()
+    
+    const body = decodeBase64Url(email.payload.body.data);
+    expect(body).toContain('Valid message of greater than 20 chars');
+    expect(body).toContain('From: validmail@gmail.com');
+    expect(body).toContain('Name: John Doe');
+  });
+
+});
+
+test.describe('Downloads', {
+  tag: '@downloads',
+}, () => {
+
+  test('CV download works', {
+    tag: ['@smoke', '@functional'],
+  }, async ({ page }) => {
+    const path = 'C:\\Users\\User\\source\\repos\\playwright-tests\\CV_AlexDoherty.pdf'
+    try{
+      const downloadPromise = page.waitForEvent('download');
+      await page.click('text=Download')
+      const download = await downloadPromise;
+
+      const suggestedFilename = download.suggestedFilename();
+      await download.saveAs(path);
+      
+      expect(fs.existsSync(path)).toBe(true);
+      expect(suggestedFilename).toBe('CV_AlexDoherty.pdf');
+    }
+    finally {
+      fs.rmSync('C:\\Users\\User\\source\\repos\\playwright-tests\\CV_AlexDoherty.pdf', { force: true });
+    }
+  });
+
+});
