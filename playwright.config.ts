@@ -12,6 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  globalSetup: require.resolve('./global_setup'),
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -49,6 +50,7 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
 
+    
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',
