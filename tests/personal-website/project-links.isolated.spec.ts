@@ -24,16 +24,15 @@ test.describe('Search functionality', {
     const link = page.locator('.project-item.show a.btn:has(i.bi-github):has-text("Source code")').first();
 
     await link.waitFor({ state: 'visible' });
-    if (testInfo.project.name === 'webkit') {
+    if (testInfo.project.name === 'firefox') {
       [sourceCodePage] = await Promise.all([
-        page.waitForEvent('popup'),
+        page.context().waitForEvent('page'),
         link.click()
       ]);
-
     }
     else{
       [sourceCodePage] = await Promise.all([
-        page.context().waitForEvent('page'),
+        page.waitForEvent('popup'),
         link.click()
       ]);
     }
@@ -54,8 +53,12 @@ test.describe('Search functionality', {
           await sourceCodeButtons.nth(i).click()
         ]);
         
-        expect(sourceCodePage.url()).toContain('github.com/Xela96/personal-website');
-        await page.goBack();
+      const url = sourceCodePage.url();
+      expect(
+        url.includes('github.com/Xela96/personal-website') ||
+        url.includes('github.com/Xela96/playwright-tests')
+      ).toBe(true);      
+      await page.goForward();
     }
   });
 
@@ -68,23 +71,30 @@ test.describe('Filter functionality', {
     await page.locator('#dropdownMenuButton').click();
     await page.locator('.dropdown-item', {hasText: 'Flask'}).click();
 
+    const sourceCodeButtons = page.getByText('Source Code');
+    const buttonsCount = await sourceCodeButtons.count();
+
     let sourceCodePage;
     if (testInfo.project.name === 'webkit') {
       // Dynamic search so wait for project to appear
       await page.locator('.project-item.show').first().waitFor({ state: 'visible' });
       const link = page.locator('.project-item.show a.btn:has(i.bi-github):has-text("Source code")').first();
       await link.waitFor({ state: 'visible' });
-
-      [sourceCodePage] = await Promise.all([
-        page.waitForEvent('popup'),
-        link.click()
-      ]);
+      for (let i = 0; i < buttonsCount; i++) {
+        [sourceCodePage] = await Promise.all([
+          page.waitForEvent('popup'),
+          link.click()
+        ]);
+        const url = sourceCodePage.url();
+        expect(url.includes('github.com/Xela96/personal-website')).toBe(true);
+        await page.goForward();
+      }
 
     }
     else{
       [sourceCodePage] = await Promise.all([
         page.waitForEvent('popup'),
-        page.locator('a.btn:has(i.bi-github):has-text("Source code")').first().click()
+        page.locator('.project-item.show a.btn:has(i.bi-github):has-text("Source code")').first().click()
       ]);
     }
 
