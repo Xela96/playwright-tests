@@ -14,10 +14,10 @@ jobs:
   setup-local-site:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@develop
+      - uses: actions/checkout@v3
         with:
-          name: Xela96/personal-website
-          ref: refs/heads/release
+          repository: Xela96/personal-website
+          ref: develop
 
   setup_node:
     runs-on: ubuntu-latest
