@@ -33,7 +33,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   
-  grep: process.env.TEST_TYPE ? new RegExp(`@${process.env.TEST_TYPE}`) : undefined,
+  grep: process.env.TEST_TYPE && process.env.TEST_TYPE !== "none"
+  ? new RegExp(`@${process.env.TEST_TYPE}`)
+  : undefined,
 
   /* Configure projects for major browsers */
   projects: [

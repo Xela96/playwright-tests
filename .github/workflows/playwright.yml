@@ -17,9 +17,10 @@ on:
       test_type:
         description: 'Choose test type'
         required: false
-        default: ""
+        default: "none"
         type: choice
         options:
+          - none
           - smoke
           - functional
           - regression
