@@ -73,6 +73,8 @@ jobs:
           else
             echo "TEST_URL=http://127.0.0.1:5000" >> $GITHUB_ENV
           fi
+      - name: Print TEST_URL
+        run: echo "TEST_URL is $TEST_URL"
       # --- Run Playwright tests ---
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
