@@ -33,7 +33,7 @@ jobs:
 
       # --- Install npm latest ---
       - name: Upgrade npm
-        run: npm install -g npm@latest
+        run: npm install npm@latest
 
       # --- Install dependencies for Playwright tests ---
       - name: Install test dependencies
