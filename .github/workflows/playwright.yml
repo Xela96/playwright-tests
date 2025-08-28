@@ -93,7 +93,7 @@ jobs:
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
 
-        if : ${{ env.TEST_TYPE == '' }}
+        if : ${{ env.TEST_TYPE == 'none' }}
         run: npx playwright test
         working-directory: .
       - name: Run Playwright tests with tag
