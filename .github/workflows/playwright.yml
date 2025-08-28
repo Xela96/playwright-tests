@@ -35,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: ./personal-website
 
   run-site-locally:
     runs-on: ubuntu-latest
