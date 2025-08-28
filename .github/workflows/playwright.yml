@@ -12,21 +12,29 @@ on:
         default: 'staging'
 jobs:
   setup-local-site:
-    uses: actions/checkout@develop
-    with:
-      name: Xela96/personal-website
-      ref: refs/heads/release
-      
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@develop
+        with:
+          name: Xela96/personal-website
+          ref: refs/heads/release
+
   setup_node:
-    uses: actions/setup-node@v2.1.5
-    with:
-      node-version: 16
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 16
 
   install_npm_latest:
-    run: npm i -g npm@latest
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm i -g npm@latest
 
   install_dependencies:
-    uses: bahmutov/npm-install@v1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: bahmutov/npm-install@v1
 
   test:
     timeout-minutes: 60
