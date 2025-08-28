@@ -36,6 +36,13 @@ jobs:
     steps:
       - uses: bahmutov/npm-install@v1
 
+  run-site-locally:
+    runs-on: ubuntu-latest
+    needs: [setup-local-site, setup_node, install_npm_latest, install_dependencies]
+    steps:
+      - run: cd ./personal-website
+      - run: flask run
+
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
