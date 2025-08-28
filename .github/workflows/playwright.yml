@@ -11,61 +11,65 @@ on:
         required: true
         default: 'staging'
 jobs:
-  setup-local-site:
+  test-site:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      # --- Checkout repos ---
+      - name: Checkout test repo
+        uses: actions/checkout@v3
+
+      - name: Checkout personal website repo
+        uses: actions/checkout@v3
         with:
           repository: Xela96/personal-website
           ref: develop
+          path: personal-website
 
-  setup_node:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/setup-node@v4
+      # --- Setup Node ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 16
 
-  install_npm_latest:
-    runs-on: ubuntu-latest
-    steps:
-      - run: npm install npm@latest
+      # --- Install npm latest ---
+      - name: Upgrade npm
+        run: npm install -g npm@latest
 
-  install_dependencies:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: bahmutov/npm-install@v1
+      # --- Install dependencies for Playwright tests ---
+      - name: Install test dependencies
+        uses: bahmutov/npm-install@v1
         with:
           working-directory: ./playwright-tests
 
-  run-site-locally:
-    runs-on: ubuntu-latest
-    needs: [setup-local-site, setup_node, install_npm_latest, install_dependencies]
-    steps:
-      - run: cd ./personal-website
-      - run: flask run
+      # --- Setup and run Flask site ---
+      - name: Install Python deps
+        run: pip install -r personal-website/requirements.txt
 
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      env:
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - name: Run Flask app
+        run: |
+          cd personal-website
+          flask run &
+        shell: bash
+
+      # --- Run Playwright tests ---
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: npx playwright test
+        working-directory: ./playwright-tests
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
