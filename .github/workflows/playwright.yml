@@ -9,7 +9,21 @@ on:
       environment:
         description: 'Choose environment'
         required: true
-        default: 'staging'
+        default: 'production'
+        type: choice
+        options:
+          - local
+          - production
+      test_type:
+        description: 'Choose test type'
+        required: true
+        default: 'e2e'
+        type: choice
+        options:
+          - smoke
+          - functional
+          - search
+          - filter
 jobs:
   test-site:
     runs-on: ubuntu-latest
