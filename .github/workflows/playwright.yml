@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: bahmutov/npm-install@v1
         with:
-          working-directory: ./personal-website
+          working-directory: ./playwright-tests
 
   run-site-locally:
     runs-on: ubuntu-latest
