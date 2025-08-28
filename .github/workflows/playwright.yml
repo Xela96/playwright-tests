@@ -17,6 +17,7 @@ on:
       test_type:
         description: 'Choose test type'
         required: false
+        default: ""
         type: choice
         options:
           - smoke
@@ -62,6 +63,7 @@ jobs:
         run: pip install -r personal-website/requirements.txt
 
       - name: Run Flask app
+        if: ${{ env.environment == 'local' }}
         run: |
           cd personal-website
           flask run &
