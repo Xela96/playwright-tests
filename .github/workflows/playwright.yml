@@ -22,14 +22,14 @@ jobs:
   setup_node:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v2.1.5
+      - uses: actions/setup-node@v4
         with:
           node-version: 16
 
   install_npm_latest:
     runs-on: ubuntu-latest
     steps:
-      - run: npm i -g npm@latest
+      - run: npm install npm@latest
 
   install_dependencies:
     runs-on: ubuntu-latest
