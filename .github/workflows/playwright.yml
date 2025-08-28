@@ -38,8 +38,6 @@ jobs:
       # --- Install dependencies for Playwright tests ---
       - name: Install test dependencies
         uses: bahmutov/npm-install@v1
-        with:
-          working-directory: ./playwright-tests
 
       # --- Setup and run Flask site ---
       - name: Install Python deps
