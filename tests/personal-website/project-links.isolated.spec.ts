@@ -2,7 +2,7 @@ import {test, expect} from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
   // Go to the starting url before each test.
-  await page.goto('https://dohertyalex.cc/projects');
+  await page.goto('/projects');
   await page.reload();
 });
 

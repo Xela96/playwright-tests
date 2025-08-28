@@ -6,7 +6,7 @@ import * as path from 'path';
 
 test.beforeEach(async ({ page }) => {
   // Go to the starting url before each test.
-  await page.goto('https://dohertyalex.cc/');
+  await page.goto('/');
 });
 
 function decodeBase64Url(base64url: string): string {
@@ -25,7 +25,7 @@ test.describe('Navigation', {
   }, async ({ page }) => {
     await expect(page).toHaveTitle(/Alex Doherty/);
 
-    await page.goto('https://www.dohertyalex.cc/');
+    await page.goto('/');
 
     await expect(page).toHaveTitle(/Alex Doherty/);
   });
@@ -48,7 +48,7 @@ test.describe('Navigation', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await page.click('text=Projects')
-    expect(page.url()).toContain('dohertyalex.cc/projects');
+    expect(page.url()).toContain('/projects');
   });
 
 });
