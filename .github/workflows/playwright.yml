@@ -68,7 +68,7 @@ jobs:
         shell: bash
       - name: Set TEST_URL based on environment
         run: |
-          if [ "${ENVIRONMENT}" = "production" ]; then
+          if [ "${environment}" = "production" ]; then
             echo "TEST_URL=https://dohertyalex.cc/" >> $GITHUB_ENV
           else
             echo "TEST_URL=http://127.0.0.1:5000" >> $GITHUB_ENV
