@@ -67,8 +67,10 @@ jobs:
         if: ${{ env.environment == 'local' }}
         run: |
           cd personal-website
-          flask run &
+          flask run --host=0.0.0.0 --port=5000 &
         shell: bash
+
+      # --- Setup URL to run tests on ---
       - name: Set TEST_URL based on environment
         run: |
           if [ "${environment}" = "production" ]; then
@@ -78,7 +80,7 @@ jobs:
           fi
       - name: Print TEST_URL
         run: echo "TEST_URL is $TEST_URL"
-      # --- Run Playwright tests ---
+      
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -87,6 +89,8 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
+      # --- Run Playwright tests ---
       - name: Run Playwright tests with no tag
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -96,6 +100,8 @@ jobs:
         if : ${{ env.TEST_TYPE == 'none' }}
         run: npx playwright test
         working-directory: .
+
+      # --- Run Playwright tests with a test tag ---
       - name: Run Playwright tests with tag
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -106,6 +112,8 @@ jobs:
         if: ${{ env.TEST_TYPE == 'smoke' || env.TEST_TYPE == 'functional' || env.TEST_TYPE == 'regression' || env.TEST_TYPE == 'search' || env.TEST_TYPE == 'filter' }}
         run: npx playwright test --grep=@${{ env.TEST_TYPE }}
         working-directory: .
+
+      # --- Upload Playwright test report ---
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
