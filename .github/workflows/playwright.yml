@@ -90,6 +90,12 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+
+      # --- Server check ---
+      - name: Check if site is up
+        run: curl -v http://127.0.0.1:5000/ || exit 1
+        if: ${{ env.environment == 'local' }}
+
       # --- Run Playwright tests ---
       - name: Run Playwright tests with no tag
         env:
