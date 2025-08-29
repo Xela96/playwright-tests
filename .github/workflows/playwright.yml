@@ -58,10 +58,18 @@ jobs:
       # --- Install dependencies for Playwright tests ---
       - name: Install test dependencies
         uses: bahmutov/npm-install@v1
+      
 
+      
       # --- Setup and run Flask site ---
       - name: Install Python deps
         run: pip install -r personal-website/requirements.txt
+
+
+      # --- File check ---
+      - name: List files in current directory
+        run: ls -la ./personal-website
+        if: ${{ env.environment == 'local' }}
 
       - name: Run Flask app
         if: ${{ env.environment == 'local' }}
@@ -94,11 +102,6 @@ jobs:
       # --- Server check ---
       - name: Check if site is up
         run: curl -v http://127.0.0.1:5000/ || exit 1
-        if: ${{ env.environment == 'local' }}
-
-      # --- File check ---
-      - name: List files in current directory
-        run: ls -la
         if: ${{ env.environment == 'local' }}
 
       # --- Run Playwright tests ---
