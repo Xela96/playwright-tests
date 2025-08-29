@@ -96,6 +96,11 @@ jobs:
         run: curl -v http://127.0.0.1:5000/ || exit 1
         if: ${{ env.environment == 'local' }}
 
+      # --- File check ---
+      - name: List files in current directory
+        run: ls -la
+        if: ${{ env.environment == 'local' }}
+
       # --- Run Playwright tests ---
       - name: Run Playwright tests with no tag
         env:
