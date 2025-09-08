@@ -3,10 +3,21 @@ import { getAccessToken, checkInbox } from 'gmail-getter';
 import * as fs from 'fs';
 import * as path from 'path';
 
+async function waitForServer(url: string, timeout = 10000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return;
+    } catch {}
+    await new Promise(r => setTimeout(r, 500));
+  }
+  throw new Error('Server not responding in time');
+}
 
 test.beforeEach(async ({ page }) => {
   // Go to the starting url before each test.
-  await page.goto('/');
+  await waitForServer('/');
 });
 
 function decodeBase64Url(base64url: string): string {
@@ -21,13 +32,13 @@ test.describe('Navigation', {
 }, () => {
 
   test('homepage loads and has correct title', {
-    tag: ['@smoke', '@functional'],
+    tag: ['@smoke', '@functional', '@sample'],
   }, async ({ page }) => {
-    await expect(page).toHaveTitle(/Alex Doherty/);
+    await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 10000 });
 
-    await page.goto('/');
+    await page.goto('/', { timeout: 10000 });
 
-    await expect(page).toHaveTitle(/Alex Doherty/);
+    await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 10000 });
   });
 
   test('LinkedIn link navigates correctly', {

@@ -11,7 +11,7 @@ test.describe('Navigation', {
 }, () => {
 
   test('homepage loads and has correct title', {
-    tag: ['@smoke', '@functional', '@sample'],
+    tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await expect(page).toHaveTitle(/Alex Doherty/);
 
