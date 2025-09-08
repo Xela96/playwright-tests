@@ -2,12 +2,13 @@ import { test, expect } from '@playwright/test';
 import { getAccessToken, checkInbox } from 'gmail-getter';
 import * as fs from 'fs';
 import * as path from 'path';
+import fetch from 'node-fetch';
 
 async function waitForServer(url: string, timeout = 10000) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
     try {
-      const res = await fetch(url);
+      const res = await fetch('http://127.0.0.1:5000${url}');
       if (res.ok) return;
     } catch {}
     await new Promise(r => setTimeout(r, 500));
@@ -18,6 +19,8 @@ async function waitForServer(url: string, timeout = 10000) {
 test.beforeEach(async ({ page }) => {
   // Go to the starting url before each test.
   await waitForServer('/');
+
+  await page.goto('/');
 });
 
 function decodeBase64Url(base64url: string): string {
