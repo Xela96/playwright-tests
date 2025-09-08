@@ -81,6 +81,10 @@ jobs:
 
       - name: Run Flask app
         if: ${{ env.environment == 'local' }}
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL  }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: |
           cd personal-website
           export FLASK_ENV=development
