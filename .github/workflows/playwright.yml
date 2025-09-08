@@ -27,6 +27,7 @@ on:
           - search
           - filter
           - navigation
+          - sample
 jobs:
   test-site:
     env:
@@ -139,7 +140,7 @@ jobs:
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
           TEST_TYPE: ${{ env.TEST_TYPE }}
           TEST_URL: ${{ env.TEST_URL }}
-        if: ${{ env.TEST_TYPE == 'smoke' || env.TEST_TYPE == 'functional' || env.TEST_TYPE == 'regression' || env.TEST_TYPE == 'search' || env.TEST_TYPE == 'filter' || env.TEST_TYPE == 'navigation' }}
+        if: ${{ env.TEST_TYPE == 'smoke' || env.TEST_TYPE == 'functional' || env.TEST_TYPE == 'regression' || env.TEST_TYPE == 'search' || env.TEST_TYPE == 'filter' || env.TEST_TYPE == 'navigation' || env.TEST_TYPE == 'sample'}}
         run: npx playwright test --grep=@${{ env.TEST_TYPE }}
         working-directory: .
 
