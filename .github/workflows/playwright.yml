@@ -73,7 +73,7 @@ jobs:
 
       # --- Setup database ---
       - name: Setup database
-        if: ${{ env.ENVIRONMENT == 'local' }}
+        if: ${{ inputs.environment == 'local' }}
         run: |
           cd personal-website
           export FLASK_APP=app.py
