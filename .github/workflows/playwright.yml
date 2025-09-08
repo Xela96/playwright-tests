@@ -75,7 +75,8 @@ jobs:
       - name: Setup database
         if: ${{ inputs.environment == 'local' }}
         run: |
-          export FLASK_APP=personal-website/app.py
+          cd personal-website
+          export FLASK_APP=app.py
           python seed.py
 
       - name: Run Flask app
