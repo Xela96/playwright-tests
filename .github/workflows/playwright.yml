@@ -75,8 +75,20 @@ jobs:
         if: ${{ env.environment == 'local' }}
         run: |
           cd personal-website
+          export FLASK_ENV=development
           flask run --host=0.0.0.0 --port=5000 &
+          sleep 5
+          curl -s http://127.0.0.1:5000/ || true
         shell: bash
+
+      - name: Run Flask in background and log
+        if: ${{ env.ENVIRONMENT == 'local' }}
+        run: |
+          cd personal-website
+          export FLASK_ENV=development
+          flask run --host=0.0.0.0 --port=5000 > flask.log 2>&1 &
+          sleep 5
+          cat flask.log
 
       # --- Setup URL to run tests on ---
       - name: Set TEST_URL based on environment
