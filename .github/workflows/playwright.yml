@@ -139,7 +139,7 @@ jobs:
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
           TEST_TYPE: ${{ env.TEST_TYPE }}
           TEST_URL: ${{ env.TEST_URL }}
-        if: ${{ env.TEST_TYPE == 'smoke' || env.TEST_TYPE == 'functional' || env.TEST_TYPE == 'regression' || env.TEST_TYPE == 'search' || env.TEST_TYPE == 'filter' }}
+        if: ${{ env.TEST_TYPE == 'smoke' || env.TEST_TYPE == 'functional' || env.TEST_TYPE == 'regression' || env.TEST_TYPE == 'search' || env.TEST_TYPE == 'filter' || env.TEST_TYPE == 'navigation' }}
         run: npx playwright test --grep=@${{ env.TEST_TYPE }}
         working-directory: .
 
