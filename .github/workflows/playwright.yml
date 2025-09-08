@@ -26,6 +26,7 @@ on:
           - regression
           - search
           - filter
+          - navigation
 jobs:
   test-site:
     env:
