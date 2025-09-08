@@ -8,7 +8,7 @@ async function waitForServer(url: string, timeout = 10000) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
     try {
-      const res = await fetch('http://127.0.0.1:5000${url}');
+      const res = await fetch(`http://127.0.0.1:5000${url}`);
       if (res.ok) return;
     } catch {}
     await new Promise(r => setTimeout(r, 500));
