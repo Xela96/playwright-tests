@@ -15,7 +15,7 @@ async function waitForServer(url: string, timeout = 10000) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await waitForServer('/projects');
+  await waitForServer('/');
   // Go to the starting url before each test.
   await page.goto('/projects');
 });
