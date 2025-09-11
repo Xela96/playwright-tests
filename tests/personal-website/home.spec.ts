@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import fetch from 'node-fetch';
 
+// Async wait for CI/CD local run of tests that load slower
 async function waitForServer(url: string, timeout = 10000) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
