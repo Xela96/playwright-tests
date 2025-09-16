@@ -91,10 +91,11 @@ jobs:
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: |
           cd personal-website
-          export FLASK_ENV=development
-          flask run --host=0.0.0.0 --port=5000 &
-          sleep 5
-          curl -s http://127.0.0.1:5000/ || true
+          export FLASK_APP=app.py
+          flask run --debug &
+          sleep 3
+          curl -v http://127.0.0.1:5000/projects || true
+          cat instance/*.db || true
         shell: bash
 
       # --- Setup URL to run tests on ---
@@ -128,14 +129,7 @@ jobs:
         run: curl -v http://127.0.0.1:5000/projects || exit 1
         if: ${{ env.environment == 'local' }}
         
-      - name: Debug logs
-        run: |
-          cd personal-website
-          export FLASK_APP=app.py
-          flask run --debug &
-          sleep 3
-          curl -v http://127.0.0.1:5000/projects || true
-          cat instance/*.db || true
+
 
       # --- Run Playwright tests ---
       - name: Run Playwright tests with no tag
