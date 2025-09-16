@@ -91,6 +91,7 @@ jobs:
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: |
           cd personal-website
+          ls -R
           export FLASK_APP=app.py
           flask run --debug &
           sleep 3
@@ -124,15 +125,10 @@ jobs:
         run: curl -v http://127.0.0.1:5000/ || exit 1
         if: ${{ env.environment == 'local' }}
 
-      - name: File structure check
-        run: |
-          cd personal-website
-          ls -R
-
-            # --- Database check ---
-            - name: Check if projects have been populated
-              run: curl -v http://127.0.0.1:5000/projects || exit 1
-              if: ${{ env.environment == 'local' }}
+      # --- Database check ---
+      - name: Check if projects have been populated
+        run: curl -v http://127.0.0.1:5000/projects || exit 1
+        if: ${{ env.environment == 'local' }}
         
 
 
