@@ -124,10 +124,14 @@ jobs:
         run: curl -v http://127.0.0.1:5000/ || exit 1
         if: ${{ env.environment == 'local' }}
 
-      # --- Database check ---
-      - name: Check if projects have been populated
-        run: curl -v http://127.0.0.1:5000/projects || exit 1
-        if: ${{ env.environment == 'local' }}
+      - name: File structure check
+        run: |          
+          ls -R
+
+            # --- Database check ---
+            - name: Check if projects have been populated
+              run: curl -v http://127.0.0.1:5000/projects || exit 1
+              if: ${{ env.environment == 'local' }}
         
 
 
