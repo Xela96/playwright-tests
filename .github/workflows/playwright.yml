@@ -125,7 +125,8 @@ jobs:
         if: ${{ env.environment == 'local' }}
 
       - name: File structure check
-        run: |          
+        run: |
+          cd personal-website
           ls -R
 
             # --- Database check ---
