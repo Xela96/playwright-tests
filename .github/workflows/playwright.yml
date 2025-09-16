@@ -79,6 +79,8 @@ jobs:
         run: |
           cd personal-website
           export FLASK_APP=app.py
+          flask db reset || true
+          flask db create || true
           python seed.py
 
       - name: Run Flask app
