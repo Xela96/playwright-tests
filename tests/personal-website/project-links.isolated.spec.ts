@@ -15,7 +15,7 @@ async function waitForServer(url: string, timeout = 10000) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await waitForServer('/');
+  await waitForServer('/projects');
   // Go to the starting url before each test.
   await page.goto('/projects');
 });
@@ -112,6 +112,6 @@ test.describe('Filter functionality', {
       ]);
     }
 
-    expect(sourceCodePage.url()).toContain('github.com/Xela96/personal-website');        
+    expect(sourceCodePage!.url()).toContain('github.com/Xela96/personal-website');        
   });
 });
