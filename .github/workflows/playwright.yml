@@ -86,12 +86,18 @@ jobs:
           SUPABASE_USER: ${{ secrets.SUPABASE_USER }}
         run: |
           cd personal-website
-          ls -R
           export FLASK_APP=app.py
-          flask run --debug &
-          sleep 3
-          curl -v http://127.0.0.1:5000/projects || true
-          cat instance/*.db || true
+          # Start Flask server on 0.0.0.0 so Playwright can connect
+          flask run --host=0.0.0.0 --port=5000 &
+          # Wait up to 40s for the server to respond
+          for i in {1..40}; do
+            if curl -s http://127.0.0.1:5000/projects > /dev/null; then
+              echo "Flask server is up"
+              break
+            fi
+            echo "Waiting for Flask server..."
+            sleep 1
+          done
         shell: bash
 
       # --- Setup URL to run tests on ---
