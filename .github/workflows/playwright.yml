@@ -73,16 +73,6 @@ jobs:
         run: ls -la ./personal-website
         if: ${{ env.environment == 'local' }}
 
-      # --- Setup database ---
-      - name: Setup database
-        if: ${{ inputs.environment == 'local' }}
-        run: |
-          cd personal-website
-          export FLASK_APP=app.py
-          flask db reset || true
-          flask db create || true
-          python seed.py
-
       - name: Run Flask app
         if: ${{ env.environment == 'local' }}
         env:
