@@ -79,6 +79,11 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL  }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          SUPABASE_DB: ${{ secrets.SUPABASE_DB }}
+          SUPABASE_HOST: ${{ secrets.SUPABASE_HOST }}
+          SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
+          SUPABASE_PORT: ${{ secrets.SUPABASE_PORT }}
+          SUPABASE_USER: ${{ secrets.SUPABASE_USER }}
         run: |
           cd personal-website
           ls -R
