@@ -88,7 +88,7 @@ jobs:
           cd personal-website
           ls -R
           export FLASK_APP=app.py
-          flask run --host=0.0.0.0 --port=5000 &
+          flask run --debug &
           sleep 3
           curl -v http://127.0.0.1:5000/projects || true
           cat instance/*.db || true
