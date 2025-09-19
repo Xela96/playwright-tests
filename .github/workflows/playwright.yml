@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: Xela96/personal-website
-          ref: fix-project-for-local-testing
+          ref: develop
           path: personal-website
 
       # --- Setup Node ---
