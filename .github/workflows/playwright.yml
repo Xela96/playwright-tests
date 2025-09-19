@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: Xela96/personal-website
-          ref: develop
+          ref: fix-project-for-local-testing
           path: personal-website
 
       # --- Setup Node ---
@@ -61,12 +61,9 @@ jobs:
       - name: Install test dependencies
         uses: bahmutov/npm-install@v1
       
-
-      
       # --- Setup and run Flask site ---
       - name: Install Python deps
         run: pip install -r personal-website/requirements.txt
-
 
       # --- File check ---
       - name: List files in current directory
@@ -87,9 +84,7 @@ jobs:
         run: |
           cd personal-website
           export FLASK_APP=app.py
-          # Start Flask server on 0.0.0.0 so Playwright can connect
           flask run --host=0.0.0.0 --port=5000 &
-          # Wait up to 40s for the server to respond
           for i in {1..40}; do
             if curl -s http://127.0.0.1:5000/projects > /dev/null; then
               echo "Flask server is up"
