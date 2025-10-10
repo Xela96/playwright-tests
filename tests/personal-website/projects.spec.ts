@@ -3,10 +3,11 @@ import fetch from 'node-fetch';
 
 // Async wait for CI/CD local run of tests that load slower
 async function waitForServer(url: string, timeout = 40000) {
+  const baseURL = process.env.TEST_TARGET === 'local' ? 'http://127.0.0.1:5000' : 'https://dohertyalex.cc';
   const start = Date.now();
   while (Date.now() - start < timeout) {
     try {
-      const res = await fetch(`http://127.0.0.1:5000${url}`);
+      const res = await fetch(`${baseURL}${url}`);
       if (res.ok) return;
     } catch {}
     await new Promise(r => setTimeout(r, 500));
