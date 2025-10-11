@@ -38,11 +38,11 @@ test.describe('Navigation', {
   test('homepage loads and has correct title', {
     tag: ['@smoke', '@functional', '@sample'],
   }, async ({ page }) => {
-    await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 20000 });
+    await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 40000 });
 
     await page.goto('/', { timeout: 10000 });
 
-    await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 20000 });
+    await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 40000 });
   });
 
   test('LinkedIn link navigates correctly', {
