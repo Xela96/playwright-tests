@@ -95,6 +95,10 @@ jobs:
           done
         shell: bash
 
+      - name: Show Flask logs if server fails
+        if: ${{ env.environment == 'local' }}
+        run: tail -n 50 personal-website/flask.log
+
       # --- Setup URL to run tests on ---
       - name: Set TEST_URL based on environment
         run: |
