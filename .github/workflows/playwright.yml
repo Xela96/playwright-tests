@@ -75,6 +75,7 @@ jobs:
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL  }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           SUPABASE_DB: ${{ secrets.SUPABASE_DB }}
           SUPABASE_HOST: ${{ secrets.SUPABASE_HOST }}
