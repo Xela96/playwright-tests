@@ -73,10 +73,14 @@ jobs:
       - name: Run Flask app
         if: ${{ env.environment == 'local' }}
         env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL  }}
-          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SUPABASE_CONN_STRING: ${{ secrets.SUPABASE_CONN_STRING }}
           SUPABASE_DB: ${{ secrets.SUPABASE_DB }}
           SUPABASE_HOST: ${{ secrets.SUPABASE_HOST }}
           SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
