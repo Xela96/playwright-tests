@@ -14,4 +14,4 @@ RUN npm ci
 COPY . .
 
 # Run Playwright tests in headless mode
-CMD ["npx", "playwright", "test", "--reporter=html", "--output", "playwright-report"]
+CMD ["npx", "playwright", "test", "--headless", "--reporter=html", "--quiet"]

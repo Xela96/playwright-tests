@@ -9,29 +9,87 @@ on:
       environment:
         description: 'Choose environment'
         required: true
-        default: 'staging'
+        default: 'production'
+        type: choice
+        options:
+          - local
+          - production
+      test_type:
+        description: 'Choose test type'
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - smoke
+          - functional
+          - regression
+          - search
+          - filter
+          - navigation
 jobs:
-  test:
-    timeout-minutes: 60
+  test-site:
+    env:
+      environment: ${{ github.event.inputs.environment }}
+      TEST_TYPE: ${{ github.event.inputs.test_type }}
+
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      env:
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - name: Checkout test repo
+        uses: actions/checkout@v3
+
+      - name: Checkout personal website repo
+        uses: actions/checkout@v3
+        with:
+          repository: Xela96/personal-website
+          ref: develop
+          path: personal-website
+
+      # --- Setup URL to run tests on ---
+      - name: Set TEST_URL based on environment
+        run: |
+          if [ "${environment}" = "production" ]; then
+            echo "TEST_URL=https://dohertyalex.cc/" >> $GITHUB_ENV
+          else
+            echo "TEST_URL=http://web:5000" >> $GITHUB_ENV
+          fi      
+
+      # --- Setup test category variable ---
+      - name: Set TEST_TYPE based on test category input
+        run: |
+          if [ "${{ github.event.inputs.test_type }}" = "all" ]; then
+            echo "TEST_TYPE=" >> $GITHUB_ENV
+          else
+            echo "TEST_TYPE=${{ github.event.inputs.test_type }}" >> $GITHUB_ENV
+          fi
+
+      - name: Run Flask and Playwright through Docker Compose
+        working-directory: ${{ github.workspace }}
+        env:
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          APP_SECRET_KEY: ${{ secrets.APP_SECRET_KEY }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SUPABASE_CONN_STRING: ${{ secrets.SUPABASE_CONN_STRING }}
+          SUPABASE_DB: ${{ secrets.SUPABASE_DB }}
+          SUPABASE_HOST: ${{ secrets.SUPABASE_HOST }}
+          SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
+          SUPABASE_PORT: ${{ secrets.SUPABASE_PORT }}
+          SUPABASE_USER: ${{ secrets.SUPABASE_USER }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+          TEST_TYPE: ${{ env.TEST_TYPE }}
+          TEST_URL: ${{ env.TEST_URL }}
+        run: docker compose up --build --exit-code-from tests
+
+      # --- Upload Playwright test report ---
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
