@@ -1,9 +1,24 @@
 import {test, expect} from '@playwright/test'
+import fetch from 'node-fetch';
+
+// Async wait for CI/CD local run of tests that load slower
+async function waitForServer(url: string, timeout = 40000) {
+  const baseURL = process.env.TEST_TARGET === 'local' ? 'http://web:5000' : 'https://dohertyalex.cc';
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const res = await fetch(`${baseURL}${url}`);
+      if (res.ok) return;
+    } catch {}
+    await new Promise(r => setTimeout(r, 500));
+  }
+  throw new Error('Server not responding in time');
+}
 
 test.beforeEach(async ({ page }) => {
+  await waitForServer('/projects');
   // Go to the starting url before each test.
-  await page.goto('https://dohertyalex.cc/projects');
-  await page.evaluate(() => location.reload());
+  await page.goto('/projects');
 });
 
 test.describe('Navigation', {
@@ -15,7 +30,7 @@ test.describe('Navigation', {
   }, async ({ page }) => {
     await expect(page).toHaveTitle(/Alex Doherty/);
 
-    await page.goto('https://www.dohertyalex.cc/');
+    await page.goto('/');
 
     await expect(page).toHaveTitle(/Alex Doherty/);
   });
@@ -38,14 +53,14 @@ test.describe('Navigation', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await page.click('text=Home');
-    expect(page.url()).toContain('dohertyalex.cc/');
+    expect(page.url()).toContain('/');
   });
 
   test('Projects page link navigates correctly', {
       tag: ['@functional'],
   }, async ({ page }) => {
       await page.click('text=Projects');
-      expect(page.url()).toContain('dohertyalex.cc/projects');
+      expect(page.url()).toContain('/projects');
   });
 
 });

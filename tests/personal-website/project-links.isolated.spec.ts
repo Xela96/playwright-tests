@@ -1,9 +1,24 @@
 import {test, expect} from '@playwright/test'
+import fetch from 'node-fetch';
+
+// Async wait for CI/CD local run of tests that load slower
+async function waitForServer(url: string, timeout = 40000) {
+  const baseURL = process.env.TEST_TARGET === 'local' ? 'http://web:5000' : 'https://dohertyalex.cc';
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const res = await fetch(`${baseURL}${url}`);
+      if (res.ok) return;
+    } catch {}
+    await new Promise(r => setTimeout(r, 500));
+  }
+  throw new Error('Server not responding in time');
+}
 
 test.beforeEach(async ({ page }) => {
+  await waitForServer('/projects');
   // Go to the starting url before each test.
-  await page.goto('https://dohertyalex.cc/projects');
-  await page.reload();
+  await page.goto('/projects');
 });
 
 test.describe('Search functionality', {
@@ -98,6 +113,6 @@ test.describe('Filter functionality', {
       ]);
     }
 
-    expect(sourceCodePage.url()).toContain('github.com/Xela96/personal-website');        
+    expect(sourceCodePage!.url()).toContain('github.com/Xela96/personal-website');        
   });
 });

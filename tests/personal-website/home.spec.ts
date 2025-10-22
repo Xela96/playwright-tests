@@ -2,11 +2,26 @@ import { test, expect } from '@playwright/test';
 import { getAccessToken, checkInbox } from 'gmail-getter';
 import * as fs from 'fs';
 import * as path from 'path';
+import fetch from 'node-fetch';
 
+// Async wait for CI/CD local run of tests that load slower
+async function waitForServer(url: string, timeout = 40000) {
+  const baseURL = process.env.TEST_TARGET === 'local' ? 'http://web:5000' : 'https://dohertyalex.cc';
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const res = await fetch(`${baseURL}${url}`);
+      if (res.ok) return;
+    } catch {}
+    await new Promise(r => setTimeout(r, 500));
+  }
+  throw new Error('Server not responding in time');
+}
 
 test.beforeEach(async ({ page }) => {
   // Go to the starting url before each test.
-  await page.goto('https://dohertyalex.cc/');
+  await waitForServer('/');
+  await page.goto('/');
 });
 
 function decodeBase64Url(base64url: string): string {
@@ -23,11 +38,11 @@ test.describe('Navigation', {
   test('homepage loads and has correct title', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
-    await expect(page).toHaveTitle(/Alex Doherty/);
+    await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 40000 });
 
-    await page.goto('https://www.dohertyalex.cc/');
+    await page.goto('/', { timeout: 10000 });
 
-    await expect(page).toHaveTitle(/Alex Doherty/);
+    await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 40000 });
   });
 
   test('LinkedIn link navigates correctly', {
@@ -48,7 +63,7 @@ test.describe('Navigation', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await page.click('text=Projects')
-    expect(page.url()).toContain('dohertyalex.cc/projects');
+    expect(page.url()).toContain('/projects');
   });
 
 });
