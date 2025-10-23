@@ -1,9 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       environment:
@@ -27,11 +27,13 @@ on:
           - search
           - filter
           - navigation
+  repository_dispatch:
+    types: [run-playwright-tests]
 jobs:
   test-site:
     env:
-      environment: ${{ github.event.inputs.environment }}
-      TEST_TYPE: ${{ github.event.inputs.test_type }}
+      environment: ${{ github.event.inputs.environment || github.event.client_payload.environment || 'local'}}
+      TEST_TYPE: ${{ github.event.inputs.test_type || github.event.client_payload.test_type || 'all' }}
 
     runs-on: ubuntu-latest
     steps:
