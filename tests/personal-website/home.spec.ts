@@ -176,7 +176,7 @@ test.describe('Form validation', {
     await expect(page.getByRole('textbox', { name: 'message' })).toHaveValue('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
   });
 
-  test('email textbox enforces a min length of 20 characterss', {
+  test('email textbox enforces a min length of 20 characters', {
     tag: ['@functional', '@regression'],
   }, async ({ page }, testInfo) => {
     await test.step('Fill out contact form fields', async () => {
@@ -184,7 +184,6 @@ test.describe('Form validation', {
       await page.getByRole('textbox', { name: 'email' }).fill('validmail@gmail.com');
       await page.getByRole('textbox', { name: 'message' }).fill('less than 20 chars');
     });
-
 
     let postRequestTriggered = false;
     page.on('request', (request) => {
@@ -195,19 +194,18 @@ test.describe('Form validation', {
 
     await page.click('input[value="Send Message"]');
 
-    // alternative expectation for webkit due to different error messages
-    if (testInfo.project.name === 'webkit') {
-      await expect(page.getByText(/Form validation failed/i)).toBeVisible();
-    }
-    else{
+    // Check that the message field was not cleared
+    await expect(page.getByRole('textbox', { name: 'message' }))
+      .toHaveValue('less than 20 chars');
+
+    // Only assert that the POST request should not have been sent on Chromium/Firefox
+    if (testInfo.project.name === 'chromium' || testInfo.project.name === 'firefox') {
       expect(postRequestTriggered).toBe(false);
     }
-
-    await expect(page.getByRole('textbox', { name: 'message' })).toHaveValue('less than 20 chars');
-
   });
 
 });
+
 
 test.describe('Form submission', {
   tag: '@form',

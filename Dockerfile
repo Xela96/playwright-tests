@@ -13,5 +13,5 @@ RUN npm ci
 # Copy the rest of your project files
 COPY . .
 
-# Run Playwright tests in headless mode
-CMD ["npx", "playwright", "test", "--headless", "--reporter=html", "--quiet"]
+# Run Playwright tests in headless mode (remove headless for local testing)
+CMD ["npx", "playwright", "test", "--reporter=html", "--quiet"]
