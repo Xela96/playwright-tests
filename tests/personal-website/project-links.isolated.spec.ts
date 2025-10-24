@@ -25,7 +25,7 @@ test.describe('Search functionality', {
   tag: ['@search', '@functional'],
 }, () => {
 
-  test('project search displays valid source code links', {}, async({ page }, testInfo) => {
+  test('Verify that project search displays valid source code links', {}, async({ page }, testInfo) => {
     await page.getByRole('textbox').fill('personal portfolio website');
     await page.keyboard.press('Enter') // Required as fill function behaviour doesn't replicate ajax live reaction to text in textbox
     await page.waitForTimeout(200);
@@ -62,7 +62,7 @@ test.describe('Search functionality', {
 
   });
 
-  test('source code page links navigate correctly', {
+  test('Verify that source code page links navigate correctly', {
     tag: ['@smoke'],
   }, async ({ page }) => {
     const sourceCodeButtons = page.getByText('Source Code');
@@ -88,7 +88,7 @@ test.describe('Search functionality', {
 test.describe('Filter functionality', {
   tag: ['@filter', '@functional'],
 }, () => {
-  test('valid links are displayed on filtered results', {}, async({ page }, testInfo ) => {    
+  test('Verify that valid links are displayed on filtered results', {}, async({ page }, testInfo ) => {    
     await page.locator('#dropdownMenuButton').click();
     await page.locator('.dropdown-item', {hasText: 'Flask'}).click();
 

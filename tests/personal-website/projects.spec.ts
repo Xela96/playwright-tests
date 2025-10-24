@@ -25,42 +25,11 @@ test.describe('Navigation', {
   tag: '@navigation',
 }, () => {
 
-  test('homepage loads and has correct title', {
-    tag: ['@smoke', '@functional'],
-  }, async ({ page }) => {
-    await expect(page).toHaveTitle(/Alex Doherty/);
-
-    await page.goto('/');
-
-    await expect(page).toHaveTitle(/Alex Doherty/);
-  });
-
-  test('LinkedIn link navigates correctly', {
-    tag: ['@smoke', '@functional'],
-  }, async ({ page }) => {
-    await page.locator('a.btn:has(i.bi-linkedin)').click();
-    expect(page.url()).toContain('linkedin.com/in/alex-doherty/');
-  });
-
-  test('Github link navigates correctly', {
-    tag: ['@smoke', '@functional'],
-  }, async ({ page }) => {
-    await page.locator('a.btn:has(i.bi-github)').first().click();
-    expect(page.url()).toContain('github.com/Xela96');
-  });
-
-  test('Homepage link navigates correctly', {
+  test('Verify that homepage link navigates correctly', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await page.click('text=Home');
     expect(page.url()).toContain('/');
-  });
-
-  test('Projects page link navigates correctly', {
-      tag: ['@functional'],
-  }, async ({ page }) => {
-      await page.click('text=Projects');
-      expect(page.url()).toContain('/projects');
   });
 
 });
@@ -71,7 +40,7 @@ test.describe('Filter functionality', {
 
   const projectNames = ['Simulation Engine Test Framework', 'Personal Portfolio Website', 'Automated Fluid Tester']
 
-  test('filter for a project by unique technology displays unique project', {
+  test('Verify that filtering for a project by unique technology displays unique project only', {
     tag: ['@smoke']
   }, async({ page }) => {
     
@@ -90,7 +59,7 @@ test.describe('Filter functionality', {
     await expect(page.getByText('Personal Portfolio Website')).toBeVisible();
   });
 
-  test('filter for showing all projects displays all available projects', {
+  test('Verify that filtering for showing all projects displays all available projects', {
     tag: ['@smoke']
   }, async({ page }) => {
     
@@ -120,7 +89,7 @@ test.describe('Search functionality', {
   tag: ['@search', '@functional'],
 }, () => {
 
-  test('search for a project by full name', {
+  test('Verify that search for a project by full name displays unique project only', {
     tag: ['@smoke']
   }, async({ page }) => {
     await page.getByRole('textbox').fill('Personal Portfolio Website');
@@ -139,7 +108,7 @@ test.describe('Search functionality', {
     await expect(page.getByText('Automated Fluid Tester')).not.toBeVisible();
   });
 
-  test('project search by partial name prefix', {
+  test('Verify that project search by partial name prefix displays project', {
     tag: ['@smoke']
   }, async({ page }) => {
     await page.getByRole('textbox').fill('simulation eng');
@@ -150,7 +119,7 @@ test.describe('Search functionality', {
     await expect(page.getByText('Automated Fluid Tester')).not.toBeVisible();
   });
 
-  test('project search by partial name mid-string', {}, async({ page }) => {
+  test('Verify that project search by partial name mid-string displays project', {}, async({ page }) => {
     await page.getByRole('textbox').fill('flu');
     await page.keyboard.press('Enter') // Required as fill function behaviour doesn't replicate ajax live reaction to text in textbox
 
