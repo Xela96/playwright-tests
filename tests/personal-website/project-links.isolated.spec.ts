@@ -28,6 +28,7 @@ test.describe('Search functionality', {
   test('project search displays valid source code links', {}, async({ page }, testInfo) => {
     await page.getByRole('textbox').fill('personal portfolio website');
     await page.keyboard.press('Enter') // Required as fill function behaviour doesn't replicate ajax live reaction to text in textbox
+    await page.waitForTimeout(200);
 
     await expect(page.getByRole('heading', { name: 'Personal Portfolio Website', level: 2 })).toBeVisible();        
 
@@ -35,11 +36,16 @@ test.describe('Search functionality', {
 
     let sourceCodePage: { url: () => any; };
     // Dynamic search so wait for project to appear
-    await page.locator('.project-item.show').first().waitFor({ state: 'visible' });
-    const link = page.locator('.project-item.show a.btn:has(i.bi-github):has-text("Source code")').first();
+    const projectItem = page.locator('.project-item.show').first();
+    await projectItem.waitFor({ state: 'visible' });
+
+    await page.waitForTimeout(200);
+
+    const link = projectItem.locator('a.btn:has(i.bi-github):has-text("Source code")');
+    await link.waitFor({ state: 'visible' });
 
     await link.waitFor({ state: 'visible' });
-    if (testInfo.project.name === 'firefox') {
+    if (testInfo.project.name === 'firefox'){
       [sourceCodePage] = await Promise.all([
         page.context().waitForEvent('page'),
         link.click()
