@@ -30,12 +30,12 @@ function decodeBase64Url(base64url: string): string {
   return buff.toString('utf-8');
 }
   
-
+// Navigation tests from base html template so testing on home page covers all pages
 test.describe('Navigation', {
   tag: '@navigation',
 }, () => {
 
-  test('homepage loads and has correct title', {
+  test('Verify that homepage loads and has correct title', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 40000 });
@@ -45,21 +45,21 @@ test.describe('Navigation', {
     await expect(page).toHaveTitle(/Alex Doherty/, { timeout: 40000 });
   });
 
-  test('LinkedIn link navigates correctly', {
+  test('Verify that LinkedIn link navigates correctly', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await page.locator('a.btn:has(i.bi-linkedin)').click();
     expect(page.url()).toContain('linkedin.com/in/alex-doherty/');
   });
 
-  test('Github link navigates correctly', {
+  test('Verify that Github link navigates correctly', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await page.locator('a.btn:has(i.bi-github)').click();
     expect(page.url()).toContain('github.com/Xela96');
   });
 
-  test('Projects page link navigates correctly', {
+  test('Verify that projects page link navigates correctly', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     await page.click('text=Projects')
@@ -72,25 +72,15 @@ test.describe('Form validation', {
   tag: ['@form', '@validation'],
 }, () => {
 
-  test('name textbox can be used', {
+  test('Verify that all contact form text fields accept user input', {
     tag: ['@functional'],
   }, async ({ page }) => {
     await page.getByRole('textbox', { name: 'name' }).fill('example name');
-  });
-
-  test('email textbox can be used', {
-    tag: ['@functional'],
-  }, async ({ page }) => {
     await page.getByRole('textbox', { name: 'email' }).fill('example email');
-  });
-
-  test('message textbox can be used', {
-    tag: ['@functional'],
-  }, async ({ page }) => {
     await page.getByRole('textbox', { name: 'message' }).fill('example message of 20 characters');
   });
 
-  test('name textbox enforces a max length of 40', {
+  test('Verify that name textbox enforces a max length of 40', {
     tag: ['@functional'],
   }, async ({ page }) => {
     await test.step('Fill out contact form fields', async () => {
@@ -102,7 +92,7 @@ test.describe('Form validation', {
     await expect(page.getByRole('textbox', { name: 'name' })).toHaveValue('this is a test name that is too long ove');
   });
 
-  test('name textbox enforces a min length of 3 characters', {
+  test('Verify that name textbox enforces a min length of 3 characters', {
     tag: ['@functional'],
   }, async ({ page }) => {
     await test.step('Fill out contact form fields', async () => {
@@ -127,7 +117,7 @@ test.describe('Form validation', {
 
   });
 
-  test('email textbox enforces a max length of 60', {
+  test('Verify that email textbox enforces a max length of 60', {
     tag: ['@functional'],
   }, async ({ page }) => {
     await test.step('Fill out contact form fields', async () => {
@@ -139,7 +129,7 @@ test.describe('Form validation', {
     await expect(page.getByRole('textbox', { name: 'email' })).toHaveValue('this_is_a_test_name_that_is_too_long_over_60_characters@gmai');
   });
 
-  test('email textbox enforces a min length of 3 characters', {
+  test('Verify that email textbox enforces a min length of 3 characters', {
     tag: ['@functional'],
   }, async ({ page }) => {
     await test.step('Fill out contact form fields', async () => {
@@ -164,7 +154,7 @@ test.describe('Form validation', {
 
   });
 
-  test('message textbox enforces a max length of 500', {
+  test('Verify that message textbox enforces a max length of 500', {
     tag: ['@functional'],
   }, async ({ page }) => {
     await test.step('Fill out contact form fields', async () => {
@@ -176,7 +166,7 @@ test.describe('Form validation', {
     await expect(page.getByRole('textbox', { name: 'message' })).toHaveValue('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
   });
 
-  test('email textbox enforces a min length of 20 characters', {
+  test('Verify that email textbox enforces a min length of 20 characters', {
     tag: ['@functional', '@regression'],
   }, async ({ page }, testInfo) => {
     await test.step('Fill out contact form fields', async () => {
@@ -220,7 +210,7 @@ test.describe('Form submission', {
     );
   });
     
-  test('valid form submission sends email to correct address', {
+  test('Verify that valid form submission sends email to correct address', {
     tag: ['@smoke', '@e2e', '@regression'],
   }, async ({ page }) => {
     await test.step('Fill out contact form fields', async () => {
@@ -251,7 +241,7 @@ test.describe('Downloads', {
   tag: '@downloads',
 }, () => {
 
-  test('CV download works', {
+  test('Verify that CV download works', {
     tag: ['@smoke', '@functional'],
   }, async ({ page }) => {
     const path = 'C:\\Users\\User\\source\\repos\\playwright-tests\\CV_AlexDoherty.pdf'
